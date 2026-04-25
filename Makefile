@@ -42,7 +42,7 @@ run/worker:
 ## db/psql: Connect to the hotel database using psql as hotel_user
 .PHONY: db/psql
 db/psql:
-	psql ${DB_DSN}
+	@psql ${DB_DSN}
 
 ## db/migrations/new name=$1: Create a new database migration
 .PHONY: db/migrations/new
@@ -111,3 +111,31 @@ build/app:
 	@echo '${ECHO_PREFIX} Building cmd/app...'
 	go build -ldflags='-s' -o=./bin/app ./cmd/app
 	GOOS=linux GOARCH=amd64 go build -ldflags='-s' -o=./bin/linux_amd64/app ./cmd/app
+
+# ==================================================================================== #
+# TESTS
+# ==================================================================================== #
+
+## test/db/generate: Run query for inserting sample jobs to the database
+.PHONY: test/db/generate
+db/generate:
+	@echo 'Inserting sample jobs for stress testing...'
+	@psql ${DB_DSN} -f queries/01_insert_sample_jobs.sql
+
+## test/db/indexes: Run query for listing indexes
+.PHONY: test/db/indexes
+test/db/indexes:
+	@echo '${ECHO_PREFIX} Running DB query to list indexes...'
+	@psql ${DB_DSN} -f queries/02_list_indexes.sql
+
+## test/db/btree: Run query for testing query execution with B-Tree indexes
+.PHONY: test/db/btree
+test/db/btree:
+	@echo '${ECHO_PREFIX} Running DB EXPLAIN ANALYZE to test queries that use B-Tree Indexes...'
+	@psql ${DB_DSN} -f queries/03_btree_index_test.sql
+
+## test/db/gin: Run query for testing query execution with GIN indexes
+.PHONY: test/db/gin
+test/db/gin:
+	@echo '${ECHO_PREFIX} Running DB EXPLAIN ANALYZE to test queries that use GIN Indexes...'
+	@psql ${DB_DSN} -f queries/04_gin_index_test.sql
