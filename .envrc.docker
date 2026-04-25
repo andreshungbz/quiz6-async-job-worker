@@ -1,0 +1,2 @@
+export DB_DSN=postgres://async_user:async_password@postgres/async_demo?sslmode=disable
+export PORT=4001

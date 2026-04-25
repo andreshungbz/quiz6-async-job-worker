@@ -1,0 +1,37 @@
+services:
+  postgres:
+    image: postgres:18.2
+    container_name: async_postgres
+    environment:
+      POSTGRES_USER: async_user
+      POSTGRES_PASSWORD: async_password
+      POSTGRES_DB: async_demo
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U async_user -d async_demo']
+      interval: 1s
+      timeout: 5s
+      retries: 5
+    networks:
+      - async_network
+
+  app:
+    build: .
+    container_name: async_app
+    ports:
+      - '4001:4001'
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: async_user
+      DB_PASSWORD: async_password
+      DB_NAME: async_demo
+    networks:
+      - async_network
+
+networks:
+  async_network:
+    name: async_network
+    driver: bridge
