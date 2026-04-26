@@ -122,11 +122,11 @@ test/db/generate:
 	@echo 'Inserting sample jobs for stress testing...'
 	@psql ${DB_DSN} -f queries/01_insert_sample_jobs.sql
 
-## test/db/indexes: Run query for listing indexes
-.PHONY: test/db/indexes
-test/db/indexes:
-	@echo '${ECHO_PREFIX} Running DB query to list indexes...'
-	@psql ${DB_DSN} -f queries/02_list_indexes.sql
+## test/db/update: Run query for updating a record
+.PHONY: test/db/update
+test/db/update:
+	@echo '${ECHO_PREFIX} Running DB query to update record...'
+	@psql ${DB_DSN} -f queries/02_update_job.sql
 
 ## test/db/btree: Run query for testing query execution with B-Tree indexes
 .PHONY: test/db/btree
