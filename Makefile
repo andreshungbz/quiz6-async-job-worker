@@ -118,7 +118,7 @@ build/app:
 
 ## test/db/generate: Run query for inserting sample jobs to the database
 .PHONY: test/db/generate
-db/generate:
+test/db/generate:
 	@echo 'Inserting sample jobs for stress testing...'
 	@psql ${DB_DSN} -f queries/01_insert_sample_jobs.sql
 
